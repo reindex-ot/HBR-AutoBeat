@@ -44,6 +44,9 @@ blue_points_colors = [
 ]
 # blue_red_points_colors = [,(146, 155, 235),,(95, 106, 224)]
 
+# 增加颜色容差范围
+COLOR_TOLERANCE = 10
+
 
 def capture_screenshot(left, top, width, height):
     hdesktop = win32gui.GetDesktopWindow()
@@ -184,7 +187,7 @@ def capture_window(window_title, test_flag=False):
             continue
         else:
             if closed_printed:
-                print("已聚焦！")  # 窗口重新聚焦时打印“start”
+                print("已聚焦！")  # 窗口重新聚焦时打印“已聚焦”
             closed_printed = False  # 窗口重新聚焦时重置标志
 
         if not running:
@@ -212,16 +215,16 @@ def capture_window(window_title, test_flag=False):
 
             original_flag = (
                 (
-                    r >= original_red_points_colors[i][0]
-                    and r <= original_points_colors[i][0]
+                    r >= original_red_points_colors[i][0] - COLOR_TOLERANCE
+                    and r <= original_points_colors[i][0] + COLOR_TOLERANCE
                 )
                 and (
-                    g >= original_red_points_colors[i][1]
-                    and g <= original_points_colors[i][1]
+                    g >= original_red_points_colors[i][1] - COLOR_TOLERANCE
+                    and g <= original_points_colors[i][1] + COLOR_TOLERANCE
                 )
                 and (
-                    b >= original_red_points_colors[i][2]
-                    and b <= original_points_colors[i][2]
+                    b >= original_red_points_colors[i][2] - COLOR_TOLERANCE
+                    and b <= original_points_colors[i][2] + COLOR_TOLERANCE
                 )
             )
             original_color = blue_points_colors[i]
@@ -232,9 +235,9 @@ def capture_window(window_title, test_flag=False):
                 continue
 
             if (
-                r < original_red_points_colors[i][0]
-                or g < original_red_points_colors[i][1]
-                or b < original_red_points_colors[i][2]
+                r < original_red_points_colors[i][0] - COLOR_TOLERANCE
+                or g < original_red_points_colors[i][1] - COLOR_TOLERANCE
+                or b < original_red_points_colors[i][2] - COLOR_TOLERANCE
                 or (r > 210 and g > 210 and b > 210)
             ) and key_states[keys[i]] == 0:
                 keyboard.press(keys[i])
@@ -242,9 +245,9 @@ def capture_window(window_title, test_flag=False):
                 continue
 
             if key_states[keys[i]] > 5 and (
-                abs(color[0] - original_color[0]) > 5
-                or abs(color[1] - original_color[1]) > 5
-                or abs(color[2] - original_color[2]) > 5
+                abs(color[0] - original_color[0]) > COLOR_TOLERANCE
+                or abs(color[1] - original_color[1]) > COLOR_TOLERANCE
+                or abs(color[2] - original_color[2]) > COLOR_TOLERANCE
             ):
                 keyboard.release(keys[i])
                 key_states[keys[i]] = 0
