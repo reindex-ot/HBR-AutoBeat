@@ -1,0 +1,13 @@
+[project]
+name = "hbr-autobeat"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pillow>=11.0.0",
+    "pyautogui>=0.9.54",
+    "pyinstaller>=6.11.1",
+    "pynput>=1.7.7",
+    "pywin32>=308",
+]
