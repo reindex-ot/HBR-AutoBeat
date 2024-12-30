@@ -9,7 +9,7 @@ from PIL import Image, ImageDraw
 from pynput import keyboard
 from pynput.keyboard import Controller, Key, KeyCode, Listener  # noqa: F401
 
-keyboard = Controller()
+keyboard = Controller()  # noqa: F811
 keys = ["z", "x", "c", "v", "b", "n"]
 key_states = {key: 0 for key in keys}  # 跟踪按键状态
 
