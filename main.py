@@ -112,10 +112,13 @@ def on_press(key):
         if is_window_on_top(window):  # 仅在窗口聚焦时检测输入
             if key.char == "o":  # 按下 'o' 键开始自动演奏
                 running = True
-                print("start!")
+                print("正在打歌，按'p'停止!")
             elif key.char == "p":  # 按下 'p' 键停止自动演奏
                 running = False
-                print("stop!")
+                print("已停止打歌，按'o'继续!")
+                # 模拟esc
+                keyboard.press(Key.esc)
+                keyboard.release(Key.esc)
     except AttributeError:
         pass
 
@@ -150,6 +153,9 @@ def capture_window(window_title, test_flag=False):
     global window  # 声明为全局变量，以便在 on_press 中访问
     all_windows = gw.getAllTitles()
     browser_window_titles = [title for title in all_windows if window_title in title]
+    if browser_window_titles == []:
+        print("未找到指定窗口，请检查窗口标题是否正确！")
+        exit()
     chosen_browser_title = browser_window_titles[0]
     window = gw.getWindowsWithTitle(chosen_browser_title)[0]
     window.restore()
@@ -176,18 +182,23 @@ def capture_window(window_title, test_flag=False):
     min_x = min(point[0] for point in points)
     max_x = max(point[0] for point in points)
 
-    print("已聚焦！")
-    closed_printed = False  # 添加标志变量
+    # print("已聚焦！")
+    closed_printed = True  # 添加标志变量
     while True:
         if not is_window_on_top(window):
             if not closed_printed:
-                print("未聚焦！")
+                print("未聚焦！聚焦后按 'o' 键开始打歌，按 'p' 键停止")
+                running = False  # 窗口未聚焦时停止打歌
                 closed_printed = True  # 设置标志，确保只打印一次
             time.sleep(0.1)  # 添加延迟，减少CPU占用
             continue
         else:
             if closed_printed:
-                print("已聚焦！")  # 窗口重新聚焦时打印“已聚焦”
+                print("已聚焦！", end=' ')  # 窗口重新聚焦时打印“已聚焦”
+                if running:
+                    print("正在打歌，按 'p' 键停止")
+                else:
+                    print("按 'o' 键开始打歌")
             closed_printed = False  # 窗口重新聚焦时重置标志
 
         if not running:
