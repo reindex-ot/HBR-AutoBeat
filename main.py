@@ -163,19 +163,27 @@ def capture_window(window_title, test_flag=False):
     time.sleep(0.5)
 
     hwnd = window._hWnd
+    
 
     client_rect = win32gui.GetClientRect(hwnd)
     client_left, client_top = win32gui.ClientToScreen(
         hwnd, (client_rect[0], client_rect[1])
     )
 
+    client_right, client_bottom = win32gui.ClientToScreen(
+        hwnd, (client_rect[2], client_rect[3])
+    )
+    client_width = client_right - client_left
+    client_height = client_bottom - client_top
+
     if test_flag:
-        client_right, client_bottom = win32gui.ClientToScreen(
-            hwnd, (client_rect[2], client_rect[3])
-        )
-        client_width = client_right - client_left
-        client_height = client_bottom - client_top
+        print("窗口分辨率：", client_width, client_height)
         test(client_left, client_top, client_width, client_height)
+
+    if(client_width != 1920 or client_height != 1080):
+        print(f"窗口分辨率不匹配。需要设置为1920x1080，当前识别为{client_width}x{client_height}，请重新在游戏内设置分辨率。按回车退出。")
+        input()
+        exit()
 
     y_value = points[0][1]
 
