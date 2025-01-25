@@ -143,6 +143,7 @@ def on_press(key):
 def on_release(key):
     pass
 
+force_run = input("是否强制运行？（y/n）,默认n。如强制运行，请先打开‘演唱会开始’界面，然后输入y：")
 
 listener = Listener(on_press=on_press, on_release=on_release)
 listener.start()
@@ -151,6 +152,7 @@ listener.start()
 def capture_window(window_title, test_flag=False):
     global running
     global window  # 声明为全局变量，以便在 on_press 中访问
+    global force_run
     all_windows = gw.getAllTitles()
     browser_window_titles = [title for title in all_windows if window_title in title]
     if browser_window_titles == []:
@@ -159,7 +161,7 @@ def capture_window(window_title, test_flag=False):
     chosen_browser_title = browser_window_titles[0]
     window = gw.getWindowsWithTitle(chosen_browser_title)[0]
     window.restore()
-    window.activate()
+    # window.activate()
     time.sleep(0.5)
 
     hwnd = window._hWnd
@@ -195,7 +197,10 @@ def capture_window(window_title, test_flag=False):
     while True:
         if not is_window_on_top(window):
             if not closed_printed:
-                print("未聚焦！聚焦后按 'o' 键开始打歌，按 'p' 键停止")
+                if(force_run != 'y'):
+                    print("未聚焦！聚焦后按 'o' 键开始打歌，按 'p' 键停止")
+                else:
+                    print("未聚焦！已强制运行，聚焦后继续打歌")
                 running = False  # 窗口未聚焦时停止打歌
                 closed_printed = True  # 设置标志，确保只打印一次
             time.sleep(0.1)  # 添加延迟，减少CPU占用
@@ -203,7 +208,10 @@ def capture_window(window_title, test_flag=False):
         else:
             if closed_printed:
                 print("已聚焦！", end=' ')  # 窗口重新聚焦时打印“已聚焦”
-                if running:
+                if(force_run == 'y'):
+                    print("已强制运行")
+                    running = True
+                elif running:
                     print("正在打歌，按 'p' 键停止")
                 else:
                     print("按 'o' 键开始打歌")
